@@ -46,7 +46,7 @@ runs:
         fail-on-cache-miss: true
 
     - if: inputs.framework == ''
-    - name: Build
+      name: Build
       run: |
         if [ "${{ inputs.projects }}" == "" ]; then
             dotnet build --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} --no-restore --framework ${{ inputs.framework }} ${{ inputs.buildSwitches }}
@@ -60,7 +60,7 @@ runs:
       shell: bash
 
     - if: inputs.framework != ''
-    - name: Build
+      name: Build
       run: |
         if [ "${{ inputs.projects }}" == "" ]; then
             dotnet build --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} --no-restore --framework ${{ inputs.framework }} ${{ inputs.buildSwitches }}
