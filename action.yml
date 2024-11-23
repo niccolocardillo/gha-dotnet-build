@@ -87,7 +87,7 @@ runs:
       name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: ${{ inputs.configuration }}
+        name: all-${{ inputs.configuration }}
         path: | 
           ${{ github.workspace }}
           !${{ github.workspace }}/.git
