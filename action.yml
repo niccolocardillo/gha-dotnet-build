@@ -10,9 +10,9 @@ inputs:
     required: true
     default: 'Debug'
   framework:
-    description: Compiles for a specific framework. The framework must be defined in the project file. Default is net8.0.
-    required: true
-    default: 'net8.0'
+    description: Compiles for a specific framework. The framework must be defined in the project file.
+    required: false
+    default: ''
   level:
     description: Sets the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]. The default is quiet.
     required: true
@@ -45,6 +45,7 @@ runs:
           dotnet-restore-
         fail-on-cache-miss: true
 
+    - if: inputs.framework == ''
     - name: Build
       run: |
         if [ "${{ inputs.projects }}" == "" ]; then
@@ -58,7 +59,21 @@ runs:
         fi
       shell: bash
 
-    - if: inputs.uploadBuildArtifact == 'true'
+    - if: inputs.framework != ''
+    - name: Build
+      run: |
+        if [ "${{ inputs.projects }}" == "" ]; then
+            dotnet build --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} --no-restore --framework ${{ inputs.framework }} ${{ inputs.buildSwitches }}
+        else
+            shopt -s globstar extglob
+            for file in ${{ inputs.projects }}; do
+              dotnet build $file --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} --no-restore --framework ${{ inputs.framework }} ${{ inputs.buildSwitches }}
+              echo "Built '$file'"
+            done
+        fi
+      shell: bash
+
+    - if: inputs.uploadBuildArtifact == 'true' && inputs.framework != ''
       name: Upload Build Artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -68,7 +83,17 @@ runs:
           !${{ github.workspace }}/.git
         include-hidden-files: true
 
-    - if: inputs.uploadBuildArtifact == 'true'
+    - if: inputs.uploadBuildArtifact == 'true' && inputs.framework == ''
+      name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.configuration }}
+        path: | 
+          ${{ github.workspace }}
+          !${{ github.workspace }}/.git
+        include-hidden-files: true
+
+    - if: inputs.uploadBuildArtifact == 'true' && inputs.framework != ''
       name: Clean
       run: |
         if [ "${{ inputs.projects }}" == "" ]; then
@@ -77,6 +102,20 @@ runs:
             shopt -s globstar
             for file in ${{ inputs.projects }}; do
               dotnet clean $file --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} --framework ${{ inputs.framework }}
+              echo "Sweeped previous build for '$file'"
+            done
+        fi
+      shell: bash
+
+    - if: inputs.uploadBuildArtifact == 'true' && inputs.framework == ''
+      name: Clean
+      run: |
+        if [ "${{ inputs.projects }}" == "" ]; then
+            dotnet clean --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }}
+        else
+            shopt -s globstar
+            for file in ${{ inputs.projects }}; do
+              dotnet clean $file --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }}
               echo "Sweeped previous build for '$file'"
             done
         fi
