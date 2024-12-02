@@ -14,23 +14,22 @@ uses: maurosoft1973/dotnet-build@v1
 
 ```yaml
 with:
-  # Optional path to the project(s) file to restore. Pass empty to have MSBuild use the default behavior.
-  # Supports globbing.
-  projects: 'src/**/*.csproj'
-  # Defines the build configuration.
-  configuration: 'Release'
-  # Compiles for a specific framework. The framework must be defined in the project file.
-  framework: 'net8.0'
-  # Sets the verbosity level of the command.
-  # Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]. 
-  # The default is quiet.
-  level: 'quiet'
   # Provides a way to fully customize the build. See https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-command-line-reference?view=vs-2022#switches for more information.
   buildSwitches: ''
-  # Upload the generated build artifact. The artifact name is: "framework.configuration" (Ex: framework: net8.0, configuration: Release, the name of artifact is : net8.0-Release)
-  uploadBuildArtifact: 'true'
+  # Defines the build configuration.
+  configuration: 'Debug'
+  # Compiles for a specific framework. The framework must be defined in the project file.
+  framework: ''
+  # Sets the verbosity level of the command. Allowed values are q[uiet], m[inimal], n[ormal], d[etailed], and diag[nostic]. The default is quiet.
+  level: 'quiet'
+  # Optional path to the project(s) file to restore. Pass empty to have MSBuild use the default behavior. Supports globbing.
+  projects: 'src/**/*.csproj'
   # When set, current workspace will be overwritten with the content of the restore cache.
   restoreCacheKey: ''
+  # Upload the generated build artifact.
+  uploadBuildArtifact: 'true'
+  # The name of generated build artifact
+  uploadBuildArtifactName: 'BuildArtifact'
 ```
 
 ### Outputs
