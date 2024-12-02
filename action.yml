@@ -82,11 +82,11 @@ runs:
       name: Clean
       run: |
         if [ "${{ inputs.projects }}" == "" ]; then
-            dotnet clean --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} ${{ steps.pack.outputs.FRAMEWORK }}
+            dotnet clean --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} ${{ steps.build.outputs.FRAMEWORK }}
         else
             shopt -s globstar
             for file in ${{ inputs.projects }}; do
-              dotnet clean $file --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} ${{ steps.pack.outputs.FRAMEWORK }}
+              dotnet clean $file --configuration ${{ inputs.configuration }} --verbosity ${{ inputs.level }} ${{ steps.build.outputs.FRAMEWORK }}
               echo "Sweeped previous build for '$file'"
             done
         fi
